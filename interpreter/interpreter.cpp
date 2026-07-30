@@ -240,3 +240,38 @@ void Chip8::OP_Cxkk()
     registers[Vx] = randNum & mask;
 }
 
+void Chip8::OP_Dxyn()
+{
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+    uint8_t height = opcode & 0x000Fu;
+
+    registers[0xF] = 0; // optimistic case for no collision
+
+    for (unsigned int row = 0; row < height; row++)
+    {
+	uint8_t sprite_row = memory[index + row];
+
+	for (unsigned int col = 0; col < 8; col++)
+	{
+	    // pixel data (0 or 1)
+	    uint8_t pixel_data = sprite_row & (0x80u >> 1);
+	    
+	    // final position of the pixel on display
+	    // skip Vy + i rows of col, then from Vx, fill pixel data
+	    uint8_t yPos = ((registers[Vy] + row) % DISPLAY_HEIGHT) * DISPLAY_WIDTH;
+	    uint8_t xPos = (registers[Vx] + col) % DISPLAY_WIDTH;
+
+	    if (pixel_data == 1)
+	    {
+		if (display[xPos + yPos] == 0xFFFFFFFF)
+		{
+		    registers[0xF] = 1;
+		}
+
+		display[xPos + yPos] ^= 0xFFFFFFFF;
+	    }
+	}
+    }
+}
+
