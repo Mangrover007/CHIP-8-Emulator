@@ -10,7 +10,7 @@ Without this guide, the project would not have started at all. Thank you for
 this amazing guide. It explains a lot of the concepts in simple understable
 terms and provides code for reference which has been a huge help.
 
-2. [Cowdog's CHIP-8 Technical Reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
+2. [Cowgod's CHIP-8 Technical Reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
 
 After getting the hang of implementing a few instruction from Austin's guide,
 I had this reference open for most of the others. It has simple and clear
