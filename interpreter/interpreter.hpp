@@ -99,5 +99,18 @@ public:
     void OP_Cxkk(); // RND, Vx, mask
 
     void OP_Dxyn(); // DRW Vx, Vy, height
+    
+    void OP_Ex9E(); // SKP Vx
+    void OP_ExA1(); // SKNP Vx
+
+    void OP_Fx07(); // LD Vx, delay_timer
+    void OP_Fx0A(); // 
+    void OP_Fx15(); // LD delay_timer, Vx
+    void OP_Fx18(); // LD sound_timer, Vx
+    void OP_Fx1E(); // ADD I, Vx
+    void OP_Fx29(); // LD F, Vx; load sprite data to I of hex in Vx
+    void OP_Fx33(); // LD B, Vx; load BCD of Vx into I, I+1, I+2
+    void OP_Fx55(); // LD [I], Vx
+    void OP_Fx65(); // LD Vx, [I]
 };
 
