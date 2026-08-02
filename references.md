@@ -28,6 +28,26 @@ served as a second technical reference for those instructions.
 This helped me clear a few misunderstandings and confusions regarding the way
 graphics are stored in CHIP-8.
 
+5. [learncpp tutorials for pointers](https://www.learncpp.com/cpp-tutorial/introduction-to-pointers/)
+
+This site has helped me understand `function pointers` and the background knowledge
+going all the way back to `lvalue references`.
+
+I suggest following the tutorial and going back to read upon the lessons it tells
+you to read about at the start. `Function pointers` required knowledge of lesson
+`12.7 Introduction to pointers` which required knowledge of lesson `lvalue
+references` which required knowledge about `value categories in c++`.
+
+I suggest going back even further to any missing information cleared up before
+reading the subsequent tutorials. The tutorials themselves are simple to follow
+and clear in its explanation.
+
+6. [Alice Goldfuss's Guide for Function Dispatch Tables](https://blog.alicegoldfuss.com/function-dispatch-tables/)
+
+This guide helped me understand the basic idea of function dispatch tables and
+sparked my curiosity to understand function pointers which led me down the rabbit
+hole of `learncpp`. It is a short but good read.
+
 ---
 
 Those are all the specific resources used that helped me make this project.
