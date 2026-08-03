@@ -40,11 +40,25 @@ public:
     uint8_t  keypad[16]{};
     uint32_t display[64 * 32]{};
 
-    uint16_t opcode; // 2 byte opcode (ex: $C622)
+    uint16_t opcode; // 2 byte opcode (ex: $C6 22)
+
+private:
+    using fn_ptr = void (Chip8::*)();
+    fn_ptr table[0xF + 1]{};
+    fn_ptr table0[0xE + 1]{};
+    fn_ptr table8[0xE + 1]{};
+    fn_ptr tableE[0xE + 1]{};
+    fn_ptr tableF[0x65 + 1]{};
+    void Table0();
+    void Table8();
+    void TableE();
+    void TableF();
 
 public:
     Chip8();
     void LoadROM(const char * filename);
+    void Cycle();
+    void initializeChip8();
 
 private:
     const unsigned int START_ADDRESS = 0x200;
@@ -112,5 +126,7 @@ public:
     void OP_Fx33(); // LD B, Vx; load BCD of Vx into I, I+1, I+2
     void OP_Fx55(); // LD [I], Vx
     void OP_Fx65(); // LD Vx, [I]
+    
+    void OP_NULL();
 };
 
