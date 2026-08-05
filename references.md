@@ -48,6 +48,13 @@ This guide helped me understand the basic idea of function dispatch tables and
 sparked my curiosity to understand function pointers which led me down the rabbit
 hole of `learncpp`. It is a short but good read.
 
+7. [Lazy Foo's SDL Tutorials](https://lazyfoo.net/tutorials/SDL/)
+
+These tutorials have been a huge help in understanding SDL mechanics. Here, I
+understood how Makefiles work in CMake for the first time.
+
+Its explanations are beginner friendly.
+
 ---
 
 Those are all the specific resources used that helped me make this project.
