@@ -15,7 +15,7 @@ Chip8::Chip8() : randEngine(std::chrono::system_clock::to_time_t(time))
 
     // initialize randEngine and rand
     rand = std::uniform_int_distribution<uint8_t>(0, 255U);
-    
+
     this->initializeChip8();
 }
 
