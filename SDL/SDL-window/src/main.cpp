@@ -78,8 +78,18 @@ int main( int argc, char** argv )
     uint8_t wheel{ 0x00 };
     uint8_t i = 0;
 
-    while (true)
+    bool quit = false;
+    SDL_Event e;
+    while (quit == false)
     {
+	if (SDL_PollEvent(&e) != 0)
+	{
+	    if (e.type == SDL_QUIT)
+	    {
+		quit = true;
+	    }
+	}
+
 	if (wheel == 0xFF)
 	{
 	    wheel = 0x00;
