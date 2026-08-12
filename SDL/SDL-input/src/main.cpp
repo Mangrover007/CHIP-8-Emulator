@@ -1,3 +1,8 @@
+/* 
+ * The idea is to load all the images first and store them in an array.
+ * Then, simply update the screen surface on a button press.
+ */
+
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <string>
@@ -103,6 +108,7 @@ int main(int argc, char** argv)
 	return -1;
     }
 
+    // load all images into the array, exit if can't
     if (!loadMedia())
     {
 	printf("Failed to load all media.\n");
