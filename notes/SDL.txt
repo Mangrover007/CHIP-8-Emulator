@@ -1,0 +1,27 @@
+This file lists a bunch of useful SDL functions.
+
+SDL_CreateWindow();
+
+SDL_GetWindowSurface();
+returns a pointer to SDL_Surface the window's surface
+
+SDL_LoadBMP();
+
+SDL_BlitSurface();
+copies the surface from source to the destination
+
+SDL_FillRect();
+fills the surface rectangle with a specific color
+
+SDL_ConvertSurface();
+converts a surface's format to the source's format
+
+SDL_BlitScaled();
+blits a surface scaled to the specified SDL_Rect<x,y,w,h>
+
+SDL_FreeSurface();
+
+SDL_DestroyWindow();
+
+SDL_Quit();
+
