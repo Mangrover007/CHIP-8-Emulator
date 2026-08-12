@@ -65,7 +65,7 @@ SDL_Surface* loadSurface(const char* path)
 
 bool loadMedia()
 {
-    const std::string path = "/home/mango/personal/emulator/SDL/assets/img-";
+    const std::string path = "/home/mango/personal/emulator/SDL/SDL-input/assets/img-";
     bool success = true;
 
     for (int imageIndex = 0; imageIndex < 6; imageIndex++)
@@ -94,7 +94,6 @@ void close()
 
     SDL_Quit();
 }
-
 int main(int argc, char** argv)
 {
     if (!init())
