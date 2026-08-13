@@ -1,0 +1,61 @@
+What does "rendering" something mean?
+
+Rendering is the process of drawing a singular frame. Internally,
+the computer stores a lot of information like polygons, texture,
+etc.
+
+This is combined into a single frame in the final output. The final
+output is a 2D frame.
+
+In SDL2, the call to SDL_UpdateWindowSurface() rendered, aka drew
+frames to the screen. The thing that did the processing in the
+background in this case was the CPU.
+
+SDL_Renderer() uses GPU for processing. So it is faster. There are
+other differences, discussed in this answer in stack overflow:
+https://stackoverflow.com/a/33411924
+
+
+In short, there are two kinds of rendering: CPU and GPU.
+
+When the CPU is processing and building the frames, it is called
+software rendering or CPU rendering. It deals with SDL_Surface
+(storing it into RAM) and with SDL_BlitSurface().
+
+Blitting is another name for software rendering.
+
+GPU rendering uses SDL_Texture (equivalent to SDL_Surface in CPU
+rendering) and other functions. SDL_Texture stores the image on
+the GPU, not the RAM.
+
+
+---
+
+
+GPU implementation typically have 2 buffers: a backbuffer and a
+frontbuffer. When you are in the process of arranging a frame
+from multiple images, you do all that work in the backbuffer.
+
+The backbuffer is like the drawing canvas. After the frame is
+arranged, it is sent to the frontbuffer to be displayed to the
+screen. The frontbuffer is the shows the final frame that the
+backbuffer cooked up.
+
+
+---
+
+
+In SDL, you use the following functions when you are doing CPU
+renering:
+
+SDL_UpdateWindowSurface() --> this updates the window frame
+SDL_Surface --> this stores the frame in RAM
+
+With GPU rendering, you have a `rendering context` tied to a
+SDL_Window pointer. More about this at:
+
+https://thenumb.at/cpp-course/sdl2/05/05.html
+
+You use SDL_RenderPresent() to draw the backbuffer in the GPU
+to the screen. SDL_Texture stores the frame in the GPU.
+

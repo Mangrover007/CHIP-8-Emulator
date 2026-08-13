@@ -55,6 +55,12 @@ understood how Makefiles work in CMake for the first time.
 
 Its explanations are beginner friendly.
 
+8. [thenumb's SDL2 tutorials](https://thenumb.at/cpp-course/sdl2/05/05.html)
+
+This tutorial helped me understand a few things that were not very clearly and
+explicitly explained in LazyFoo's SDL tutorials. I will be using this as a
+secondary guide with LazyFoo's tutorials being the primary guide.
+
 ---
 
 Those are all the specific resources used that helped me make this project.
