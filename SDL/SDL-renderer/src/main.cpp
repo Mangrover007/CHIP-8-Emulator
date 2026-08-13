@@ -8,8 +8,8 @@ SDL_Renderer* gRenderer = nullptr;
 SDL_Window* gWindow = nullptr;
 SDL_Texture* gWindowTexture = nullptr;
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 640;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 bool init()
 {
@@ -105,6 +105,63 @@ void close()
     SDL_Quit();
 }
 
+void drawImage()
+{
+    SDL_RenderCopy(gRenderer, gWindowTexture, nullptr, nullptr);
+}
+
+void drawRedSquare()
+{
+    SDL_SetRenderDrawColor(gRenderer, 0x0FF, 0x00, 0x00, 0xFF);
+    SDL_Rect red_square = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    SDL_RenderFillRect(gRenderer, &red_square);
+}
+
+void drawGreenSquare()
+{
+    SDL_SetRenderDrawColor(gRenderer, 0x000, 0xFF, 0x00, 0xFF);
+    SDL_Rect green_square = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2 / 3, SCREEN_HEIGHT  * 2 / 3};
+    SDL_RenderDrawRect(gRenderer, &green_square);
+}
+
+void drawBlueLine()
+{
+    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0xFF, 0xFF);
+    SDL_RenderDrawLine(gRenderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+void drawYellowLine()
+{
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0x00, 0xFF);
+    for (int i = 0; i < SCREEN_HEIGHT; i += 4)
+    {
+	SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, i);
+    }
+}
+
+
+using fn_ptr = void(*)();
+void render(int drawIndex, fn_ptr* drawInstructions)
+{
+    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(gRenderer);
+    
+    if (drawIndex == 0)
+    {
+	drawInstructions[0]();
+    }
+    else
+    {
+	for (int i = 1; i <= drawIndex; i++)
+	{
+	    drawInstructions[i]();
+	}
+    }
+
+    SDL_RenderPresent(gRenderer);
+}
+
+
 int main(int argc, char** argv)
 {
     if (!init())
@@ -119,11 +176,11 @@ int main(int argc, char** argv)
 	return -1;
     }
 
-    SDL_RenderClear(gRenderer);
+    fn_ptr drawInstructions[] = {drawImage, drawRedSquare, drawGreenSquare, drawBlueLine, drawYellowLine};
+    int drawInstructionSize = 5;
+    int drawIndex = 0;
 
-    SDL_RenderCopy(gRenderer, gWindowTexture, nullptr, nullptr);
-
-    SDL_RenderPresent(gRenderer);
+    render(0, drawInstructions);
 
     SDL_Event e;
     bool quit = false;
@@ -131,9 +188,30 @@ int main(int argc, char** argv)
     {
 	while (SDL_PollEvent(&e) != 0)
 	{
-	    if (e.type == SDL_QUIT)
+	    switch (e.type)
 	    {
-		quit = true;
+		case SDL_QUIT:
+		    quit = true;
+		    break;
+
+		case SDL_KEYDOWN:
+		    if (e.key.keysym.sym == SDLK_RIGHT)
+		    {
+			if (drawIndex < drawInstructionSize - 1)
+			{
+			    drawIndex++;
+			    render(drawIndex, drawInstructions);
+			}
+		    }
+		    else if (e.key.keysym.sym == SDLK_LEFT)
+		    {
+			if (drawIndex > 0)
+			{
+			    drawIndex--;
+			    render(drawIndex, drawInstructions);
+			}
+		    }
+		    break;
 	    }
 	}
     }
