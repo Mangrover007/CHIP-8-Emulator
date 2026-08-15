@@ -66,6 +66,11 @@ bool LTexture::loadFromFile(const std::string& path)
     return true;
 }
 
+void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b)
+{
+    SDL_SetTextureColorMod(mTexture, r, g, b);
+}
+
 void LTexture::render(const int& x, const int& y, const SDL_Rect* clip)
 {
     SDL_Rect image = {x, y, mWidth, mHeight};
