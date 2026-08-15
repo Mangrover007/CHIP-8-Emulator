@@ -2,6 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include "../include/LTexture.h"
 
+#include <set>
+
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
@@ -10,6 +12,10 @@ SDL_Renderer* gRenderer = nullptr;
 
 SDL_Rect gSpriteClip[4]{};
 LTexture gSpriteSheet;
+LTexture gSpriteFoo;
+
+std::set<int> SDLK_COLOR_MOD;
+std::set<int> SDLK_ALPHA_MOD;
 
 bool init()
 {
@@ -42,11 +48,30 @@ bool init()
 	return false;
     }
 
+    SDLK_COLOR_MOD.insert(SDLK_q);
+    SDLK_COLOR_MOD.insert(SDLK_w);
+    SDLK_COLOR_MOD.insert(SDLK_e);
+    SDLK_COLOR_MOD.insert(SDLK_a);
+    SDLK_COLOR_MOD.insert(SDLK_s);
+    SDLK_COLOR_MOD.insert(SDLK_d);
+
+    SDLK_ALPHA_MOD.insert(SDLK_UP);
+    SDLK_ALPHA_MOD.insert(SDLK_DOWN);
+
     return true;
 }
 
 bool loadMedia()
-{ bool success = true;
+{
+    bool success = true;
+
+    if (!gSpriteFoo.loadFromFile("./assets/foo.png"))
+    {
+	printf("Failed to load foo.png! Error: %s\n", IMG_GetError());
+	success = false;
+    }
+
+    gSpriteFoo.setBlendMode(SDL_BLENDMODE_BLEND);
 
     if (!gSpriteSheet.loadFromFile("./assets/sprites.png"))
     {
@@ -91,10 +116,11 @@ void close()
     SDL_Quit();
 }
 
-void modulateBase(SDL_Keycode keycode, Uint8& r, Uint8& g, Uint8& b)
+void modulateColor(SDL_Keycode keycode, Uint8& r, Uint8& g, Uint8& b)
 {
     switch (keycode)
     {
+	// handle color modulation
 	case SDLK_q:
 	    r = std::min(r + 0x20, 0xFF);
 	    break;
@@ -105,13 +131,26 @@ void modulateBase(SDL_Keycode keycode, Uint8& r, Uint8& g, Uint8& b)
 	    b = std::min(b + 0x20, 0xFF);
 	    break;
 	case SDLK_a:
-	    r = std::max(g - 0x20, 0x00);
+	    r = std::max(r - 0x20, 0x00);
 	    break;
 	case SDLK_s:
 	    g = std::max(g - 0x20, 0x00);
 	    break;
 	case SDLK_d:
-	    b = std::max(g - 0x20, 0x00);
+	    b = std::max(b - 0x20, 0x00);
+	    break;
+    }
+}
+
+void modulateAlpha(SDL_Keycode keycode, Uint8& alpha)
+{
+    switch(keycode)
+    {
+	case SDLK_UP:
+	    alpha = std::min(alpha + 0x20, 0xFF);
+	    break;
+	case SDLK_DOWN:
+	    alpha = std::max(alpha - 0x20, 0x00);
 	    break;
     }
 }
@@ -133,6 +172,7 @@ int main(int argc, char** argv)
     Uint8 r = 0xFF;
     Uint8 g = 0xFF;
     Uint8 b = 0xFF;
+    Uint8 alpha = 0x00;
 
     SDL_Event e;
     bool quit = false;
@@ -146,11 +186,18 @@ int main(int argc, char** argv)
 	    }
 	    else if (e.type == SDL_KEYDOWN)
 	    {
-		modulateBase(e.key.keysym.sym, r, g, b);
+		if (SDLK_COLOR_MOD.find(e.key.keysym.sym) != SDLK_COLOR_MOD.end())
+		{
+		    modulateColor(e.key.keysym.sym, r, g, b);
+		}
+		else if (SDLK_ALPHA_MOD.find(e.key.keysym.sym) != SDLK_ALPHA_MOD.end())
+		{
+		    modulateAlpha(e.key.keysym.sym, alpha);
+		}
 	    }
 	}
 
-	SDL_SetRenderDrawColor(gRenderer, 0xAA, 0xAA, 0xAA, 0xFF);
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
 
 	gSpriteSheet.setColor(r, g, b);
@@ -159,6 +206,9 @@ int main(int argc, char** argv)
 	gSpriteSheet.render(SCREEN_WIDTH - 100, 0, &gSpriteClip[1]);
 	gSpriteSheet.render(0, SCREEN_HEIGHT - 100, &gSpriteClip[2]);
 	gSpriteSheet.render(SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100, &gSpriteClip[3]);
+
+	gSpriteFoo.setAlpha(alpha);
+	gSpriteFoo.render(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	SDL_RenderPresent(gRenderer);
     }

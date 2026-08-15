@@ -66,7 +66,7 @@ bool LTexture::loadFromFile(const std::string& path)
     return true;
 }
 
-void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b)
+void LTexture::setColor(const Uint8& r, const Uint8& g, const Uint8& b)
 {
     SDL_SetTextureColorMod(mTexture, r, g, b);
 }
@@ -92,4 +92,16 @@ void LTexture::render(const int& x, const int& y, const SDL_Rect* clip)
     // this function stretches the texture to the dest_rect's dimensions
     SDL_RenderCopy(gRenderer, mTexture, clip, &image);
 }
+
+void LTexture::setBlendMode(const SDL_BlendMode& blendmode)
+{
+    SDL_SetTextureBlendMode(mTexture, blendmode);
+}
+
+void LTexture::setAlpha(const Uint8& alpha)
+{
+    SDL_SetTextureAlphaMod(mTexture, alpha);
+}
+
+
 
