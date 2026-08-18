@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "../include/globals.h"
 #include "../include/Player.h"
 
@@ -8,6 +9,8 @@
 SDL_Window* gWindow;
 SDL_Renderer* gRenderer;
 Player gPlayer;
+LTexture gTextTexture;
+TTF_Font* gFont;
 
 bool init()
 {
@@ -23,6 +26,14 @@ bool init()
 	printf("Error initializing SDL video subsystem!\n%s\n", SDL_GetError());
 	return false;
     }
+
+    if (TTF_Init() == -1)
+    {
+	printf("Error initializing SDL video subsystem!\n%s\n", SDL_GetError());
+	return false;
+    }
+
+    gFont = TTF_OpenFont("/usr/share/fonts/OTF/ipag.ttf", 56);
 
     gWindow = SDL_CreateWindow(
 		"HELLO ANIMATION!!! :D",
@@ -50,6 +61,7 @@ bool init()
     return true;
 }
 
+// !NOTE: not sure if SDL_GetError() calls are right for error messages
 bool loadAssets()
 {
     bool success = true;
@@ -87,6 +99,12 @@ bool loadAssets()
 	gPlayer.setIdleFrame(spriteFrames[0]);
     }
 
+    if (!gTextTexture.loadTextTexture("ようこそ！僕の世界へ！", SDL_Color{0x00, 0x00, 0x00, 0xFF}))
+    {
+	printf("Error loading text!\n%s\n", SDL_GetError());
+	success = false;
+    }
+
     return success;
 }
 
@@ -94,13 +112,22 @@ void close()
 {
     SDL_DestroyWindow(gWindow);
     SDL_DestroyRenderer(gRenderer);
+
     gPlayer.~Player();
+
+    TTF_CloseFont(gFont);
+
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
 }
 
 void update()
 {
     SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(gRenderer);
+
+    gTextTexture.render(0, 0);
 
     gPlayer.render();
 
