@@ -12,6 +12,9 @@ private:
     int frame;
 
     SDL_Rect spriteFrames[4];
+    SDL_Rect idleFrame;
+
+    bool isMoving;
 
 public:
     Player();
@@ -21,5 +24,6 @@ public:
     void render();
 
     void setSpriteFrames(const SDL_Rect*);
+    void setIdleFrame(const SDL_Rect&);
 };
 

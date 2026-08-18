@@ -84,6 +84,7 @@ bool loadAssets()
 	spriteFrames[3].h = 205;
 
 	gPlayer.setSpriteFrames(spriteFrames);
+	gPlayer.setIdleFrame(spriteFrames[0]);
     }
 
     return success;
@@ -121,7 +122,7 @@ void gameLoop()
 	    {
 		quit = true;
 	    }
-	    else if (e.type == SDL_KEYDOWN)
+	    else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 	    {
 		gPlayer.move(e.key);
 	    }
