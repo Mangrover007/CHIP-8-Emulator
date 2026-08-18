@@ -8,13 +8,19 @@ private:
     const int P_SPEED = 10;
     int posX;
     int posY;
+    bool isMoving;
 
-    int frame;
-
+    // sprite data and animation date
     SDL_Rect spriteFrames[4];
     SDL_Rect idleFrame;
+    int frame;
 
-    bool isMoving;
+    // 0 = facing left, 1 = facing right
+    int direction;
+
+    // rotation
+    double angle;
+    SDL_Point* centre;
 
 public:
     Player();

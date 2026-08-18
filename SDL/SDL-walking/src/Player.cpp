@@ -5,7 +5,13 @@ Player::Player()
     posX = SCREEN_WIDTH / 2;
     posY = SCREEN_HEIGHT / 2;
     frame = 0;
+
     isMoving = false;
+
+    angle = 0;
+    centre = nullptr;
+
+    direction = 0;
 }
 
 Player::~Player()
@@ -35,6 +41,14 @@ void Player::move(const SDL_KeyboardEvent& e)
 		posX = std::min(posX + P_SPEED, SCREEN_WIDTH - 64);
 		isMoving = true;
 		break;
+	    case SDLK_q:
+		angle = angle + 90;
+		isMoving = false;
+		break;
+	    case SDLK_e:
+		angle = angle - 90;
+		isMoving = false;
+		break;
 	}
     }
     else if (e.type == SDL_KEYUP)
@@ -48,11 +62,11 @@ void Player::render()
     if (isMoving)
     {
 	frame = (frame + 1) % 4;
-	this->LTexture::render(posX, posY, &spriteFrames[frame]);
+	this->LTexture::render(posX, posY, &spriteFrames[frame], angle, centre, SDL_FLIP_NONE);
     }
     else
     {
-	this->LTexture::render(posX, posY, &idleFrame);
+	this->LTexture::render(posX, posY, &idleFrame, angle, centre, SDL_FLIP_NONE);
     }
 }
 

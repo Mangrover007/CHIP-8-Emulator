@@ -5,7 +5,7 @@ OBJS = src/main.cpp src/LTexture.cpp src/Player.cpp
 CXX = g++
 
 # COMPILER_FLAGS: Includes your local headers and suppresses warnings
-COMPILER_FLAGS = -w -lSDL2 -lSDL2_image -std=c++23
+COMPILER_FLAGS = -w -lSDL2 -lSDL2_image -lSDL2_ttf -std=c++23
 
 # OBJ_NAME specifies the name of our executable
 OBJ_NAME = ./build/walking-animation.out
