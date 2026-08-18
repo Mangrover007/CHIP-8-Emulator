@@ -8,10 +8,11 @@ public:
     ~LTexture();
 
     void free();
+    bool loadTextTexture(const std::string& text, SDL_Color color);
     bool loadFromFile(const std::string& path);
 
-    void setColor(const Uint8& r, const Uint8& g, const Uint8& b);
-    void render(const int& x, const int& y, const SDL_Rect* clip = nullptr);
+    void setColor(Uint8 r, Uint8 g, Uint8 b);
+    void render(int x, int y, const SDL_Rect* clip = nullptr, double angle = 0.0, const SDL_Point* centre = nullptr, const SDL_RendererFlip& flip = SDL_FLIP_NONE);
 
     void setBlendMode(const SDL_BlendMode& blendmode);
     void setAlpha(const Uint8& alpha);

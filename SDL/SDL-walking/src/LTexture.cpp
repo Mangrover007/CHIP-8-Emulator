@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <string>
 #include <stdio.h>
 
@@ -9,6 +10,7 @@
 // the window, but controlling how it is rendered through this
 // class.
 extern SDL_Renderer* gRenderer;
+extern TTF_Font* gFont;
 
 LTexture::LTexture()
 {
@@ -34,6 +36,7 @@ LTexture::~LTexture()
 
 bool LTexture::loadFromFile(const std::string& path)
 {
+    // what is the point of this?
     free();
 
     SDL_Surface* surface = IMG_Load(path.c_str());
@@ -66,12 +69,12 @@ bool LTexture::loadFromFile(const std::string& path)
     return true;
 }
 
-void LTexture::setColor(const Uint8& r, const Uint8& g, const Uint8& b)
+void LTexture::setColor(Uint8 r, Uint8 g, Uint8 b)
 {
     SDL_SetTextureColorMod(mTexture, r, g, b);
 }
 
-void LTexture::render(const int& x, const int& y, const SDL_Rect* clip)
+void LTexture::render(int x, int y, const SDL_Rect* clip, double angle, const SDL_Point* centre, const SDL_RendererFlip& flip)
 {
     SDL_Rect image = {x, y, mWidth, mHeight};
 
@@ -90,7 +93,7 @@ void LTexture::render(const int& x, const int& y, const SDL_Rect* clip)
     }
 
     // this function stretches the texture to the dest_rect's dimensions
-    SDL_RenderCopy(gRenderer, mTexture, clip, &image);
+    SDL_RenderCopyEx(gRenderer, mTexture, clip, &image, angle, centre, flip);
 }
 
 void LTexture::setBlendMode(const SDL_BlendMode& blendmode)
@@ -111,5 +114,37 @@ int LTexture::getHeight()
 int LTexture::getWidth()
 {
     return mWidth;
+}
+
+bool LTexture::loadTextTexture(const std::string& text, SDL_Color color)
+{
+    // what is the point of this?
+    free();
+
+    SDL_Surface* newText = TTF_RenderUTF8_Solid(gFont, text.c_str(), color);
+
+    if (newText == nullptr)
+    {
+	printf("Error creating text surface: %s\n", TTF_GetError());
+	return false;
+    }
+
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(gRenderer, newText);
+
+    if (textTexture == nullptr)
+    {
+	printf("Error creating text surface: %s\n", TTF_GetError());
+	return false;
+    }
+
+    mWidth = newText->w;
+    mHeight = newText->h;
+    mTexture = textTexture;
+
+    SDL_FreeSurface(newText);
+
+    printf("Width: %d, Height: %d\n", mWidth, mHeight);
+
+    return true;
 }
 
