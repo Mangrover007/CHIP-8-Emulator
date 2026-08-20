@@ -55,6 +55,11 @@ understood how Makefiles work in CMake for the first time.
 
 Its explanations are beginner friendly.
 
+8. [SDL2 Wiki](https://sdl.elynx.fr/FrontPage/)
+
+I used this to understand a few things here and there. This is like a main
+reference to SDL2.
+
 ---
 
 Those are all the specific resources used that helped me make this project.
