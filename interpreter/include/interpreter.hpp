@@ -26,6 +26,10 @@ const uint8_t fontset[FONTSIZE] = {
 class Chip8
 {
 public:
+    static const uint8_t DISPLAY_WIDTH = 64;
+    static const uint8_t DISPLAY_HEIGHT = 32;
+
+public:
     uint8_t  registers[16]{};
     uint8_t  memory[4096]{};
 
@@ -38,7 +42,7 @@ public:
     uint8_t  soundTimer{};
 
     uint8_t  keypad[16]{};
-    uint32_t display[64 * 32]{};
+    uint32_t display[DISPLAY_WIDTH * DISPLAY_HEIGHT]{};
 
     uint16_t opcode; // 2 byte opcode (ex: $C6 22)
 
@@ -65,10 +69,6 @@ private:
     const unsigned int FONTSET_START_ADDRESS = 0x50;
 
     const std::chrono::system_clock::time_point time = std::chrono::system_clock::now();
-
-public:
-    const uint8_t DISPLAY_HEIGHT = 32;
-    const uint8_t DISPLAY_WIDTH = 64;
 
 public:
     std::default_random_engine randEngine;
