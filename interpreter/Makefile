@@ -1,17 +1,16 @@
-# OBJS specifies which files to compile as part of the project
-OBJS = src/*.cpp
+OBJS=build/emulator.o build/interpreter.o
 
-# CXX specifies which compiler we're using
-CXX = g++
+build/mkryuga.out: $(OBJS)
+	g++ \
+	-lSDL2 \
+	$(OBJS) \
+	src/main.cpp \
+	-o build/mkryuga.out
 
-# COMPILER_FLAGS: Includes your local headers and suppresses warnings
-COMPILER_FLAGS = -w -lSDL2 -std=c++23 -I./include
+build/emulator.o: include/emulator.hpp src/emulator.cpp
+	g++ -c -I./include src/emulator.cpp -o build/emulator.o
 
-# OBJ_NAME specifies the name of our executable
-OBJ_NAME = ./build/interpreter.out
+build/interpreter.o: include/interpreter.hpp src/interpreter.cpp
+	g++ -c -I./include src/interpreter.cpp -o build/interpreter.o
 
-# This is the target that compiles our executable
-all: $(OBJS)
-	mkdir -p build
-	$(CXX) $(COMPILER_FLAGS) $(OBJS) -o $(OBJ_NAME)
 
