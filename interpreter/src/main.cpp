@@ -1,8 +1,12 @@
-#include <stdio.h>
+#include "../include/emulator.hpp"
 
 int main(int argc, char** argv)
 {
-    printf("HELLO WORLD\n");
+    // testing
+
+    Emulator emulator = Emulator{};
+    emulator.LoadROM("");
+    emulator.StartGame();
 
     return 0;
 }
