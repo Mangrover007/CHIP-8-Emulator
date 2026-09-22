@@ -154,12 +154,12 @@ void Chip8::Table8()
 
 void Chip8::TableE()
 {
-    (*this.*Chip8::table0[opcode & 0x000Fu])();
+    (*this.*Chip8::tableE[opcode & 0x000Fu])();
 }
 
 void Chip8::TableF()
 {
-    (*this.*Chip8::table0[opcode & 0x00FFu])();
+    (*this.*Chip8::tableF[opcode & 0x00FFu])();
 }
 
 // ----- CHIP-8 instruction set definitions ----- //
@@ -471,7 +471,8 @@ void Chip8::OP_Fx33()
 {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     uint8_t num = registers[Vx];
-    for (unsigned int i = 2; i >= 0; i--)
+
+    for (int i = 2; i >= 0; i--)
     {
 	memory[index + i] = num % 10;
 	num /= 10;
@@ -480,7 +481,7 @@ void Chip8::OP_Fx33()
 
 void Chip8::OP_Fx55()
 {
-    for (unsigned int i = 0; i < ((opcode & 0x0F00) >> 8u); i++)
+    for (unsigned int i = 0; i <= ((opcode & 0x0F00) >> 8u); i++)
     {
 	memory[index + i] = registers[i];
     }
@@ -488,7 +489,7 @@ void Chip8::OP_Fx55()
 
 void Chip8::OP_Fx65()
 {
-    for (unsigned int i = 0; i < ((opcode & 0x0F00) >> 8u); i++)
+    for (unsigned int i = 0; i <= ((opcode & 0x0F00) >> 8u); i++)
     {
 	registers[i] = memory[index + i];
     }
