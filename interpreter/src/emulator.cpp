@@ -26,7 +26,7 @@ bool Emulator::init()
 		mTitle,
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		chip8.DISPLAY_WIDTH, chip8.DISPLAY_HEIGHT,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		SDL_WINDOW_SHOWN);
 
 	if (mWindow == nullptr)
 	{
@@ -81,29 +81,19 @@ void Emulator::StartGame()
 
 	quit = ProcessInput();
 
-	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(mRenderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_RenderClear(mRenderer);
 
 	// we will render everything here
-
-	// !! this section is for only for testing !!
-	chip8.display[i] = (chip8.display[i] == 0x000000 ? 0xFFFFFF : 0x000000);
-
-	i += 1;
-
-	if (i >= chip8.DISPLAY_WIDTH * chip8.DISPLAY_HEIGHT)
-	{
-	    i = 0;
-	}
+	chip8.Cycle();
 
 	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom((void*) chip8.display, chip8.DISPLAY_WIDTH, chip8.DISPLAY_HEIGHT, 32, 4 * chip8.DISPLAY_WIDTH, 0, 0, 0, 0);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+
 	SDL_RenderCopy(mRenderer, texture, nullptr, nullptr);
 
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(texture);
-
-	// !! end of testing section !!
 
 	SDL_RenderPresent(mRenderer);
 
@@ -111,7 +101,6 @@ void Emulator::StartGame()
 	if (dt <= framerate)
 	{
 	    SDL_Delay(framerate - dt);
-	    printf("Framerate: %f | dt: %f\n", framerate, dt);
 	}
 
 	lastTick = startTick;
@@ -134,9 +123,147 @@ bool Emulator::ProcessInput()
 	    quit = true;
 	    break;
 	}
+	else if (e.type == SDLK_DOWN)
+	{
+	    switch (e.key.keysym.sym)
+	    {
+		case SDLK_x:
+		    chip8.keypad[0x0] = 1;
+		    break;
+
+		case SDLK_1:
+		    chip8.keypad[0x1] = 1;
+		    break;
+
+		case SDLK_2:
+		    chip8.keypad[0x2] = 1;
+		    break;
+
+		case SDLK_3:
+		    chip8.keypad[0x3] = 1;
+		    break;
+
+		case SDLK_q:
+		    chip8.keypad[0x4] = 1;
+		    break;
+
+		case SDLK_w:
+		    chip8.keypad[0x5] = 1;
+		    break;
+
+		case SDLK_e:
+		    chip8.keypad[0x6] = 1;
+		    break;
+
+		case SDLK_a:
+		    chip8.keypad[0x7] = 1;
+		    break;
+
+		case SDLK_s:
+		    chip8.keypad[0x8] = 1;
+		    break;
+
+		case SDLK_d:
+		    chip8.keypad[0x9] = 1;
+		    break;
+
+		case SDLK_z:
+		    chip8.keypad[0xA] = 1;
+		    break;
+
+		case SDLK_c:
+		    chip8.keypad[0xB] = 1;
+		    break;
+
+		case SDLK_4:
+		    chip8.keypad[0xC] = 1;
+		    break;
+
+		case SDLK_r:
+		    chip8.keypad[0xD] = 1;
+		    break;
+
+		case SDLK_f:
+		    chip8.keypad[0xE] = 1;
+		    break;
+
+		case SDLK_v:
+		    chip8.keypad[0xF] = 1;
+		    break;
+	    }
+	}
+	else if (e.type == SDLK_UP)
+	{
+	    switch (e.key.keysym.sym)
+	    {
+		case SDLK_x:
+		    chip8.keypad[0x0] = 0;
+		    break;
+
+		case SDLK_1:
+		    chip8.keypad[0x1] = 0;
+		    break;
+
+		case SDLK_2:
+		    chip8.keypad[0x2] = 0;
+		    break;
+
+		case SDLK_3:
+		    chip8.keypad[0x3] = 0;
+		    break;
+
+		case SDLK_q:
+		    chip8.keypad[0x4] = 0;
+		    break;
+
+		case SDLK_w:
+		    chip8.keypad[0x5] = 0;
+		    break;
+
+		case SDLK_e:
+		    chip8.keypad[0x6] = 0;
+		    break;
+
+		case SDLK_a:
+		    chip8.keypad[0x7] = 0;
+		    break;
+
+		case SDLK_s:
+		    chip8.keypad[0x8] = 0;
+		    break;
+
+		case SDLK_d:
+		    chip8.keypad[0x9] = 0;
+		    break;
+
+		case SDLK_z:
+		    chip8.keypad[0xA] = 0;
+		    break;
+
+		case SDLK_c:
+		    chip8.keypad[0xB] = 0;
+		    break;
+
+		case SDLK_4:
+		    chip8.keypad[0xC] = 0;
+		    break;
+
+		case SDLK_r:
+		    chip8.keypad[0xD] = 0;
+		    break;
+
+		case SDLK_f:
+		    chip8.keypad[0xE] = 0;
+		    break;
+
+		case SDLK_v:
+		    chip8.keypad[0xF] = 0;
+		    break;
+	    }
+	}
 	else
 	{
-	    printf("Emulator is taking input.\n");
+	    // printf("Emulator is taking input.\n");
 	}
     }
 
