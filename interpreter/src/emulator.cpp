@@ -70,7 +70,7 @@ void Emulator::StartGame()
     int i = 0;
 
     // information for running the game loop on a fixed framerate
-    const float framerate = (1.0 / 60) * 1000;
+    const float framerate = (1.0 / 144) * 1000;
     uint64_t startTick = SDL_GetTicks64();
     uint64_t lastTick = SDL_GetTicks64();
 
@@ -123,7 +123,7 @@ bool Emulator::ProcessInput()
 	    quit = true;
 	    break;
 	}
-	else if (e.type == SDLK_DOWN)
+	else if (e.type == SDL_KEYDOWN)
 	{
 	    switch (e.key.keysym.sym)
 	    {
@@ -192,7 +192,7 @@ bool Emulator::ProcessInput()
 		    break;
 	    }
 	}
-	else if (e.type == SDLK_UP)
+	else if (e.type == SDL_KEYUP)
 	{
 	    switch (e.key.keysym.sym)
 	    {
@@ -260,10 +260,6 @@ bool Emulator::ProcessInput()
 		    chip8.keypad[0xF] = 0;
 		    break;
 	    }
-	}
-	else
-	{
-	    // printf("Emulator is taking input.\n");
 	}
     }
 
