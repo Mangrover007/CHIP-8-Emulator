@@ -16,7 +16,7 @@ Chip8::Chip8() : randEngine(std::chrono::system_clock::to_time_t(time))
     // initialize randEngine and rand
     rand = std::uniform_int_distribution<uint8_t>(0, 255U);
     
-    this->initializeChip8();
+    initializeChip8();
 }
 
 void Chip8::initializeChip8()
@@ -234,6 +234,7 @@ void Chip8::OP_7xkk()
     registers[Vx] += byte;
 }
 
+// Math operations
 void Chip8::OP_8xy0()
 {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
@@ -372,14 +373,14 @@ void Chip8::OP_Dxyn()
 	for (unsigned int col = 0; col < 8; col++)
 	{
 	    // pixel data (0 or 1)
-	    uint8_t pixel_data = sprite_row & (0x80u >> 1);
+	    uint8_t pixel_data = (sprite_row & (0x80u >> col)) << col;
 
 	    // final position of the pixel on display
 	    // skip Vy + i rows of col, then from Vx, fill pixel data
-	    uint8_t yPos = ((registers[Vy] + row) % DISPLAY_HEIGHT) * DISPLAY_WIDTH;
-	    uint8_t xPos = (registers[Vx] + col) % DISPLAY_WIDTH;
+	    uint16_t yPos = ((registers[Vy] + row) % DISPLAY_HEIGHT) * DISPLAY_WIDTH;
+	    uint16_t xPos = (registers[Vx] + col) % DISPLAY_WIDTH;
 
-	    if (pixel_data == 1)
+	    if (pixel_data == 0x80u)
 	    {
 		if (display[xPos + yPos] == 0xFFFFFFFF)
 		{
