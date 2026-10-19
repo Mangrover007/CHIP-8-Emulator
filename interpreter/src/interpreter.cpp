@@ -115,7 +115,18 @@ void Chip8::LoadROM(const char* filename)
     for (int i = 0; i < size; i++)
     {
 	memory[START_ADDRESS + i] = buf[i];
+#ifdef DEBUG
+	std::cout << std::hex << (unsigned) buf[i] << ' ';
+	if ((i+1) % 20 == 0)
+	{
+	    std::cout << std::endl;
+	}
+#endif
     }
+
+#ifdef DEBUG
+    std::cout << std::endl;
+#endif
 
     delete[] buf;
 }
@@ -126,7 +137,11 @@ void Chip8::Cycle()
     // bytes, we bring in both the first and the second byte of
     // the instruction into the opcode, which is a 16-bit
     // (2 byte) value
+    
     opcode = (memory[pc] << 8u) | memory[pc+1];
+#ifdef DEBUG
+    std::cout << "opcode: " << std::hex << unsigned(opcode) << std::endl;
+#endif
     pc += 2;
 
     (*this.*table[(opcode & 0xF000u) >> 12u])();
@@ -204,6 +219,13 @@ void Chip8::OP_4xkk()
 {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     uint8_t byte = opcode & 0x00FFu;
+
+#ifdef DEBUG
+    std::cout << "register: " << (unsigned) Vx << std::endl;
+    std::cout << "value: " << (unsigned) registers[Vx] << std::endl;
+    std::cout << "byte: " << (unsigned) byte << std::endl;
+#endif
+
     if (registers[Vx] != byte)
     {
 	pc += 2;

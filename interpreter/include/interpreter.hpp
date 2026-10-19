@@ -1,3 +1,10 @@
+#pragma once
+
+// in the future, probably take a --debug flag in main argv[]
+// and just introduce a global variable
+// check if the variable is 0 or 1 based on the --debug flag
+// #define DEBUG
+
 #include <cstdint>
 #include <random>
 #include <chrono>
