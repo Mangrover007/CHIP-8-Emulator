@@ -2,10 +2,9 @@
 
 int main(int argc, char** argv)
 {
-    // testing
-
     Emulator emulator = Emulator{};
-    emulator.LoadROM("");
+    emulator.LoadROM("/home/mango/personal/CHIP-8-Emulator/binary.ch8");
+
     emulator.StartGame();
 
     return 0;
