@@ -1,6 +1,5 @@
 #include "../include/emulator.hpp"
 
-
 Emulator::Emulator() : chip8{}
 {
     mWindow = nullptr;
@@ -26,7 +25,10 @@ bool Emulator::init()
 		mTitle,
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		chip8.DISPLAY_WIDTH, chip8.DISPLAY_HEIGHT,
-		SDL_WINDOW_SHOWN);
+		SDL_WINDOW_SHOWN
+		| SDL_WINDOW_RESIZABLE
+		// | SDL_WINDOW_FULLSCREEN
+		);
 
 	if (mWindow == nullptr)
 	{
@@ -57,62 +59,118 @@ void Emulator::LoadROM(const char* filename)
 }
 
 
+/*
+std::chrono::duration<uint, std::milli> to_milli(std::chrono::steady_clock::duration T)
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(T);
+}
+*/
+
+
 /* !! Experimental !!
- * This function currently creates a new surface and a new texture every
- * single frame. I still need to experiment if texture streaming
+ * This function currently creates a new surface and a new texture every single frame. I still need to experiment if texture streaming
  * SDL_UpdateTexture() is faster or slower than this.
  */
 void Emulator::StartGame()
 {
-    bool quit = false;
+    bool stop = false;
 
-    // !! this is only for testing purposes !!
-    int i = 0;
+    // typedefs are scoped
+    typedef std::chrono::steady_clock clock;
 
-    // information for running the game loop on a fixed framerate
-    const float framerate = (1.0 / 144) * 1000;
-    uint64_t startTick = SDL_GetTicks64();
-    uint64_t lastTick = SDL_GetTicks64();
+    // emulator running at a CPU clock speed of 1000Hz (1e6 nanoseconds = 1 millisecond)
+    const clock::duration time_step = clock::duration((int) 1e6);
+    clock::time_point startTick = clock::now();
+    clock::time_point lastTick = clock::now();
+    
+    clock::duration dt = clock::duration(0);
 
-    // game loop
-    while (quit == false)
+    // main ideas:
+    // 1. only update lastTick when a full time_step has elapsed
+    // 2. only call chip8.Cycle() every time_step
+    //
+    // case 1: dt < time_step (don't update lastTick), wait for startTick
+    // to get past the current time_step
+    //
+    // case 2: dt >= time_step
+    //
+    // in case 2, startTick may start from some time after time_step
+    //
+    // dt in this case will encapsulate some exact multiple of time_step
+    // + a small amount of time since the start of the current time_step
+    //
+    // this is why you only subtract time_steps from dt
+    //
+    // this is also why lastTick is also updated as startTick - dt instead
+    // of just startTick
+    // because startTick may have recorded the time slightly after the start
+    // of the current time_step
+    // so you need to account for that small dt
+    
+    // you could imagine a series of time_steps as blocks in time arranged
+    // in a sequence. the first startTick starts at the first block at the
+    // very beginning. this is also the first lastTick
+    //
+    // startTick advances variably within that one time_step, and may advance
+    // to a bit farther than a single time_step, or multiple time_steps.
+    //
+    // dt accounts for all of that. lastTick is always the start of the
+    // previous time_step. with all this in mind,
+    // define dt = startTick - lastTick
+    //
+    // both cases have already been discussed above
+
+    // uint instructions_executed = 0;
+    // clock::time_point programStartTime = startTick;
+
+    // emulation loop
+    while (stop == false)
     {
-	startTick = SDL_GetTicks64();
+	startTick = clock::now();
+	dt = startTick - lastTick;
 
-	quit = ProcessInput();
+	bool exec = false;
 
-	SDL_SetRenderDrawColor(mRenderer, 0x00, 0x00, 0x00, 0xFF);
-	SDL_RenderClear(mRenderer);
+	stop = ProcessInput();
 
-	// we will render everything here
-	chip8.Cycle();
-
-	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom((void*) chip8.display, chip8.DISPLAY_WIDTH, chip8.DISPLAY_HEIGHT, 32, 4 * chip8.DISPLAY_WIDTH, 0, 0, 0, 0);
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
-
-	SDL_RenderCopy(mRenderer, texture, nullptr, nullptr);
-
-	SDL_FreeSurface(surface);
-	SDL_DestroyTexture(texture);
-
-	SDL_RenderPresent(mRenderer);
-
-	float dt = startTick - lastTick;
-	if (dt <= framerate)
+	while (dt >= time_step)
 	{
-	    SDL_Delay(framerate - dt);
+	    exec = true;
+	    chip8.Cycle();
+	    dt -= time_step;
+	    // instructions_executed++;
 	}
 
-	lastTick = startTick;
+	if (exec)
+	{
+	    lastTick = startTick - dt;
+
+	    SDL_SetRenderDrawColor(mRenderer, 0x00, 0x00, 0x00, 0xFF);
+	    SDL_RenderClear(mRenderer);
+
+	    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom((void*) chip8.display, chip8.DISPLAY_WIDTH, chip8.DISPLAY_HEIGHT, 32, 4 * chip8.DISPLAY_WIDTH, 0, 0, 0, 0);
+	    SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
+
+	    SDL_RenderCopy(mRenderer, texture, nullptr, nullptr);
+
+	    SDL_FreeSurface(surface);
+	    SDL_DestroyTexture(texture);
+
+	    SDL_RenderPresent(mRenderer);
+	}
     }
-    
+
+    // the formula for calculating number of instructions executed per second
+    // uncomment all the related variables and functions
+    // ((float) (instructions_executed * 1000) / to_milli(clock::now() - programStartTime).count())
+
     close();
 }
 
 
 bool Emulator::ProcessInput()
 {
-    bool quit = false;
+    bool exit = false;
 
     SDL_Event e;
 
@@ -120,26 +178,26 @@ bool Emulator::ProcessInput()
     {
 	if (e.type == SDL_QUIT)
 	{
-	    quit = true;
+	    exit = true;
 	    break;
 	}
 	else if (e.type == SDL_KEYDOWN)
 	{
 	    switch (e.key.keysym.sym)
 	    {
-		case SDLK_x:
+		case SDLK_LEFT:
 		    chip8.keypad[0x0] = 1;
 		    break;
 
-		case SDLK_1:
+		case SDLK_RIGHT:
 		    chip8.keypad[0x1] = 1;
 		    break;
 
-		case SDLK_2:
+		case SDLK_UP:
 		    chip8.keypad[0x2] = 1;
 		    break;
 
-		case SDLK_3:
+		case SDLK_DOWN:
 		    chip8.keypad[0x3] = 1;
 		    break;
 
@@ -196,19 +254,19 @@ bool Emulator::ProcessInput()
 	{
 	    switch (e.key.keysym.sym)
 	    {
-		case SDLK_x:
+		case SDLK_LEFT:
 		    chip8.keypad[0x0] = 0;
 		    break;
 
-		case SDLK_1:
+		case SDLK_RIGHT:
 		    chip8.keypad[0x1] = 0;
 		    break;
 
-		case SDLK_2:
+		case SDLK_UP:
 		    chip8.keypad[0x2] = 0;
 		    break;
 
-		case SDLK_3:
+		case SDLK_DOWN:
 		    chip8.keypad[0x3] = 0;
 		    break;
 
@@ -263,7 +321,7 @@ bool Emulator::ProcessInput()
 	}
     }
 
-    return quit;
+    return exit;
 }
 
 
