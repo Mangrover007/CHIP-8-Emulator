@@ -1,3 +1,7 @@
 **/build
 *.out
+*.ch8
+
+# this is the test rom for chip8
+chip8-test-rom/
 

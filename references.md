@@ -60,7 +60,13 @@ Its explanations are beginner friendly.
 I used this to understand a few things here and there. This is like a main
 reference to SDL2.
 
+9. [CHIP8 test ROM by Corax89](https://github.com/corax89/chip8-test-rom)
+
+Thanks to this ROM, I can be confident that my emulator is working correctly!
+
 ---
 
-Those are all the specific resources used that helped me make this project.
+Those are all the specific resources used that helped me make this project. Thank you.
+
+Of course, I would not have been able to do this without the generous help of [stackoverflow](https://stackoverflow.com/) users. A LOT of my doubts have been answered there and I have learned a LOT from them. Thanks to people for anwering, and thanks to people asking the questions!
 
