@@ -1,16 +1,19 @@
-OBJS=build/emulator.o build/interpreter.o
+SRCS=src/emulator.cpp src/interpreter.cpp src/main.cpp
+OBJS=build/emulator.o build/interpreter.o build/main.o
 
-build/mkryuga.out: $(OBJS)
+main.out: $(OBJS)
 	g++ \
 	-lSDL2 \
 	$(OBJS) \
-	src/main.cpp \
-	-o build/mkryuga.out
+	-o main.out
 
-build/emulator.o: include/emulator.hpp src/emulator.cpp
+build/main.o: src/main.cpp
+	g++ -c -I./include src/main.cpp -o build/main.o
+
+build/emulator.o: src/emulator.cpp
 	g++ -c -I./include src/emulator.cpp -o build/emulator.o
 
-build/interpreter.o: include/interpreter.hpp src/interpreter.cpp
+build/interpreter.o: src/interpreter.cpp
 	g++ -c -I./include src/interpreter.cpp -o build/interpreter.o
 
 
